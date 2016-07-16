@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="xDiamondConfig"
+		class="io.github.xdiamond.client.spring.XDiamondConfigFactoryBean">
+		<property name="serverHost" value="${xdiamond.server.host:localhost}" />
+		<property name="serverPort" value="5678" />
+		<property name="groupId" value="io.github.xdiamond" />
+		<property name="artifactId" value="xdiamond-client-example" />
+		<property name="version" value="0.0.1-SNAPSHOT" />
+		<property name="profile" value="${xdiamond.project.profile:dev}" />
+		<property name="secretKey" value="${xdiamond.project.secretkey:123456}"></property>
+	</bean>
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="propertiesArray">
+			<util:list>
+				<!-- 对于本地临时要修改的配置，可以像下面这样配置，注意不要把util:properties的内容提交到代码库里 -->
+				<!-- <util:properties> -->
+				<!-- <prop key="myTempConfigKey">tempConfigValue</prop> -->
+				<!-- </util:properties> -->
+				<bean class="java.util.Properties" factory-bean="xDiamondConfig"
+					factory-method="getProperties">
+				</bean>
+			</util:list>
+		</property>
+	</bean>
+
+	<context:component-scan base-package="com.test"></context:component-scan>
+</beans>
